@@ -1,0 +1,21 @@
+{
+  "architectures": [
+    "Qwen3ForCausalLM"
+  ],
+  "hidden_size": 2048,
+  "num_hidden_layers": 28,
+  "num_attention_heads": 16,
+  "num_key_value_heads": 8,
+  "head_dim": 128,
+  "intermediate_size": 6144,
+  "qk_norm": true,
+  "use_head_qk_norm": true,
+  "hidden_act": "silu",
+  "rms_norm_eps": 1e-06,
+  "rope_theta": 1000000,
+  "max_sequence_length": 2048,
+  "vocab_size": 151936,
+  "tie_word_embeddings": true,
+  "attention_bias": false,
+  "torch_dtype": "bfloat16"
+}

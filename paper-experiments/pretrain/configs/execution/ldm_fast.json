@@ -1,0 +1,14 @@
+{
+  "execution": {
+    "common": {
+      "checkpoint_address_projections": true,
+      "parameter_bank": true
+    },
+    "backend": {
+      "name": "fast",
+      "settings": {
+        "span": 4
+      }
+    }
+  }
+}

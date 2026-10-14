@@ -1,0 +1,62 @@
+# build artifacts
+
+.eggs/
+.mypy_cache
+*.egg-info/
+build/
+dist/
+pip-wheel-metadata/
+private/
+tmp/
+
+# dev tools
+
+.envrc
+.python-version
+.idea
+.venv/
+.vscode/
+.cursor/
+/*.iml
+pyrightconfig.json
+.ruff.toml
+uv.lock
+
+
+# jupyter notebooks
+
+.ipynb_checkpoints
+
+
+# miscellaneous
+
+.cache/
+doc/_build/
+*.swp
+.DS_Store
+
+
+# python
+
+*.pyc
+*.pyo
+__pycache__
+
+
+# testing and continuous integration
+
+.coverage
+.pytest_cache/
+.benchmarks
+
+# documentation build artifacts
+
+docs/build
+site/
+
+# runs
+/runs/
+/wandb/
+/scratch/
+core
+/dataset-cache/

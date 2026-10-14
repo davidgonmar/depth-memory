@@ -1,0 +1,11 @@
+{
+  "execution": {
+    "common": {
+      "checkpoint_address_projections": false
+    },
+    "backend": {
+      "name": "flexible",
+      "settings": {}
+    }
+  }
+}

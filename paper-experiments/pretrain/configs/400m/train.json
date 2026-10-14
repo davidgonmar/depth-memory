@@ -1,0 +1,6 @@
+{
+  "max_steps": 47684,
+  "warmup_steps": 1000,
+  "checkpoint_interval": 2500,
+  "data_parallel": "ddp"
+}

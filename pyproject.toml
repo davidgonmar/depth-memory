@@ -1,0 +1,61 @@
+[project]
+name = "ldm"
+version = "0.1.0"
+description = "Linear Depth Memory (LDM): code for the paper \"Depth Memory\""
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "ai2-olmo-core[fla]",
+    "cuda-python==13.3.1; sys_platform == 'linux'",
+    "datasets==3.6.0",
+    "flash-attn-4==4.0.0b28; sys_platform == 'linux'",
+    "liger-kernel==0.8.2",
+    "matplotlib==3.10.9",
+    "nvidia-cutlass-dsl[cu13]==4.6.2; sys_platform == 'linux'",
+    "numpy==2.4.4",
+    "packaging>=21.0.0",
+    "pyarrow==24.0.0",
+    "quack-kernels==0.6.4; sys_platform == 'linux'",
+    "rich==13.9.4",
+    "seaborn==0.13.2",
+    "setuptools<81.0.0",
+    "torch==2.12.0",
+    "tilelang==0.1.14",
+    "tqdm==4.67.3",
+    "transformers==5.9.0",
+    "wandb==0.27.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "ruff",
+]
+eval = [
+    "lm-eval==0.4.12",
+]
+# OLMo-core's MoE layers only. `grouped-gemm` is a CUDA source build that needs
+# nvcc on the installing host, so it is not in the default groups; none of the
+# paper's models import it.
+moe = [
+    "grouped-gemm",
+]
+
+[tool.uv]
+package = false
+default-groups = ["dev", "eval"]
+environments = [
+    "sys_platform == 'linux' and platform_machine == 'x86_64'",
+]
+no-build-isolation-package = ["grouped-gemm"]
+
+[[tool.uv.dependency-metadata]]
+name = "grouped-gemm"
+version = "0.3.0"
+requires-dist = []
+
+[tool.uv.sources]
+ai2-olmo-core = { path = "pretrain/OLMo-core", editable = true }
+grouped-gemm = { git = "https://github.com/tgale96/grouped_gemm.git", rev = "f1429a3c44c98f7912aa4b00125144cdf4e7fdb2" }
+
+[tool.uv.extra-build-variables]
+grouped-gemm = { GROUPED_GEMM_CUTLASS = "1", TORCH_CUDA_ARCH_LIST = "9.0;10.0" }

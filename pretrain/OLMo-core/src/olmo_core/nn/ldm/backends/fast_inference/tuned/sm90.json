@@ -1,0 +1,71 @@
+{
+ "device": "NVIDIA H100 80GB HBM3",
+ "shapes": {
+  "groups=16,key_dim=4,value_dim=64,hidden=32": {
+   "prefill": {"tokens": 2, "cluster": 1, "key_lanes": 2},
+   "decode": [
+    {"max_tokens": 8, "tiling": {"tokens": 1, "cluster": 8, "key_lanes": 2, "slices": 4, "weight_chunk": 1024, "weight_stages": 1}},
+    {"max_tokens": 16, "tiling": {"tokens": 1, "cluster": 4, "key_lanes": 2, "slices": 4, "weight_chunk": 1024, "weight_stages": 1}},
+    {"max_tokens": 32, "tiling": {"tokens": 1, "cluster": 8, "key_lanes": 2, "slices": 4, "weight_chunk": 512, "weight_stages": 2}},
+    {"max_tokens": 64, "tiling": {"tokens": 1, "cluster": 4, "key_lanes": 2, "slices": 4, "weight_chunk": 1024, "weight_stages": 1}},
+    {"max_tokens": 128, "tiling": {"tokens": 1, "cluster": 2, "key_lanes": 1, "slices": 1, "weight_chunk": 1024, "weight_stages": 1}},
+    {"max_tokens": 512, "tiling": {"tokens": 2, "cluster": 2, "key_lanes": 1, "slices": 1, "weight_chunk": 1024, "weight_stages": 1}}
+   ]},
+  "groups=16,key_dim=8,value_dim=128,hidden=64": {
+   "prefill": {"tokens": 1, "cluster": 1, "key_lanes": 1},
+   "decode": [
+    {"max_tokens": 1, "tiling": {"tokens": 1, "cluster": 16, "key_lanes": 4, "slices": 4, "weight_chunk": 2048, "weight_stages": 1}},
+    {"max_tokens": 4, "tiling": {"tokens": 1, "cluster": 16, "key_lanes": 2, "slices": 4, "weight_chunk": 2048, "weight_stages": 1}},
+    {"max_tokens": 8, "tiling": {"tokens": 1, "cluster": 8, "key_lanes": 2, "slices": 4, "weight_chunk": 1024, "weight_stages": 2}},
+    {"max_tokens": 16, "tiling": {"tokens": 1, "cluster": 8, "key_lanes": 2, "slices": 4, "weight_chunk": 2048, "weight_stages": 1}},
+    {"max_tokens": 32, "tiling": {"tokens": 1, "cluster": 4, "key_lanes": 2, "slices": 1, "weight_chunk": 512, "weight_stages": 2}},
+    {"max_tokens": 64, "tiling": {"tokens": 1, "cluster": 2, "key_lanes": 1, "slices": 1, "weight_chunk": 512, "weight_stages": 2}},
+    {"max_tokens": 128, "tiling": {"tokens": 2, "cluster": 2, "key_lanes": 1, "slices": 1, "weight_chunk": 512, "weight_stages": 2}},
+    {"max_tokens": 512, "tiling": {"tokens": 2, "cluster": 2, "key_lanes": 1, "slices": 1, "weight_chunk": 512, "weight_stages": 2}}
+   ]},
+  "groups=16,key_dim=8,value_dim=64,hidden=32": {
+   "prefill": {"tokens": 1, "cluster": 1, "key_lanes": 2},
+   "decode": [
+    {"max_tokens": 1, "tiling": {"tokens": 1, "cluster": 8, "key_lanes": 4, "slices": 2, "weight_chunk": 1024, "weight_stages": 1}},
+    {"max_tokens": 8, "tiling": {"tokens": 1, "cluster": 8, "key_lanes": 2, "slices": 4, "weight_chunk": 1024, "weight_stages": 1}},
+    {"max_tokens": 16, "tiling": {"tokens": 1, "cluster": 4, "key_lanes": 2, "slices": 1, "weight_chunk": 1024, "weight_stages": 1}},
+    {"max_tokens": 32, "tiling": {"tokens": 2, "cluster": 8, "key_lanes": 2, "slices": 1, "weight_chunk": 512, "weight_stages": 2}},
+    {"max_tokens": 64, "tiling": {"tokens": 1, "cluster": 2, "key_lanes": 2, "slices": 1, "weight_chunk": 1024, "weight_stages": 1}},
+    {"max_tokens": 128, "tiling": {"tokens": 1, "cluster": 2, "key_lanes": 2, "slices": 1, "weight_chunk": 512, "weight_stages": 2}},
+    {"max_tokens": 512, "tiling": {"tokens": 2, "cluster": 2, "key_lanes": 1, "slices": 1, "weight_chunk": 1024, "weight_stages": 1}}
+   ]},
+  "groups=20,key_dim=8,value_dim=128,hidden=64": {
+   "prefill": {"tokens": 2, "cluster": 2, "key_lanes": 2},
+   "decode": [
+    {"max_tokens": 8, "tiling": {"tokens": 1, "cluster": 10, "key_lanes": 2, "slices": 4, "weight_chunk": 2560, "weight_stages": 1}},
+    {"max_tokens": 16, "tiling": {"tokens": 1, "cluster": 4, "key_lanes": 2, "slices": 4, "weight_chunk": 512, "weight_stages": 2}},
+    {"max_tokens": 32, "tiling": {"tokens": 1, "cluster": 5, "key_lanes": 2, "slices": 4, "weight_chunk": 512, "weight_stages": 2}},
+    {"max_tokens": 128, "tiling": {"tokens": 1, "cluster": 2, "key_lanes": 1, "slices": 1, "weight_chunk": 512, "weight_stages": 2}},
+    {"max_tokens": 256, "tiling": {"tokens": 2, "cluster": 5, "key_lanes": 1, "slices": 1, "weight_chunk": 512, "weight_stages": 2}}
+   ]},
+  "groups=32,key_dim=8,value_dim=128,hidden=64": {
+   "prefill": {"tokens": 1, "cluster": 2, "key_lanes": 2},
+   "decode": [
+    {"max_tokens": 4, "tiling": {"tokens": 1, "cluster": 16, "key_lanes": 2, "slices": 4, "weight_chunk": 4096, "weight_stages": 1}},
+    {"max_tokens": 8, "tiling": {"tokens": 1, "cluster": 8, "key_lanes": 2, "slices": 4, "weight_chunk": 1024, "weight_stages": 2}},
+    {"max_tokens": 16, "tiling": {"tokens": 1, "cluster": 4, "key_lanes": 2, "slices": 4, "weight_chunk": 1024, "weight_stages": 2}},
+    {"max_tokens": 32, "tiling": {"tokens": 1, "cluster": 8, "key_lanes": 2, "slices": 4, "weight_chunk": 512, "weight_stages": 2}},
+    {"max_tokens": 64, "tiling": {"tokens": 2, "cluster": 8, "key_lanes": 1, "slices": 1, "weight_chunk": 512, "weight_stages": 2}},
+    {"max_tokens": 128, "tiling": {"tokens": 2, "cluster": 8, "key_lanes": 2, "slices": 1, "weight_chunk": 512, "weight_stages": 2}},
+    {"max_tokens": 256, "tiling": {"tokens": 2, "cluster": 8, "key_lanes": 1, "slices": 1, "weight_chunk": 512, "weight_stages": 2}}
+   ]},
+  "groups=40,key_dim=8,value_dim=128,hidden=64": {
+   "prefill": {"tokens": 2, "cluster": 4, "key_lanes": 2},
+   "decode": [
+    {"max_tokens": 1, "tiling": {"tokens": 1, "cluster": 10, "key_lanes": 2, "slices": 1, "weight_chunk": 5120, "weight_stages": 1}},
+    {"max_tokens": 2, "tiling": {"tokens": 1, "cluster": 10, "key_lanes": 2, "slices": 4, "weight_chunk": 5120, "weight_stages": 1}},
+    {"max_tokens": 4, "tiling": {"tokens": 1, "cluster": 10, "key_lanes": 2, "slices": 4, "weight_chunk": 1024, "weight_stages": 2}},
+    {"max_tokens": 8, "tiling": {"tokens": 1, "cluster": 8, "key_lanes": 2, "slices": 4, "weight_chunk": 1024, "weight_stages": 2}},
+    {"max_tokens": 16, "tiling": {"tokens": 1, "cluster": 5, "key_lanes": 2, "slices": 4, "weight_chunk": 1024, "weight_stages": 2}},
+    {"max_tokens": 32, "tiling": {"tokens": 2, "cluster": 5, "key_lanes": 1, "slices": 1, "weight_chunk": 512, "weight_stages": 2}},
+    {"max_tokens": 64, "tiling": {"tokens": 1, "cluster": 8, "key_lanes": 2, "slices": 4, "weight_chunk": 512, "weight_stages": 2}},
+    {"max_tokens": 128, "tiling": {"tokens": 2, "cluster": 5, "key_lanes": 1, "slices": 1, "weight_chunk": 512, "weight_stages": 2}},
+    {"max_tokens": 256, "tiling": {"tokens": 2, "cluster": 8, "key_lanes": 1, "slices": 1, "weight_chunk": 512, "weight_stages": 2}}
+   ]}
+ }
+}
