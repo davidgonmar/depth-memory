@@ -43,12 +43,9 @@ def _raw_forward(x, weight, bias, eps):
 
 
 def _raw_backward(da, x, weight, bias, u, r):
-    from .kernels.address_network import backward
-    from .kernels.address_network import config_candidates, input_grad
+    from .kernels.address_network import backward, backward_config, input_grad
 
-    capability = torch.cuda.get_device_capability(x.device)
-    config = next(candidate for candidate in config_candidates(capability)
-                  if candidate.tile_m == 128 and candidate.tile_n == 256)
+    config = backward_config(torch.cuda.get_device_capability(x.device))
     with torch.autocast(x.device.type, enabled=False):
         return backward(da, x, weight, u, r, bias, input_grad=input_grad, config=config)
 

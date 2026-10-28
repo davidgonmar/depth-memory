@@ -7,8 +7,8 @@ and writes the BF16 hidden rows ``SiLU(BF16(u * rms + bias))`` ``[2, N, H]``. Th
 projections of both sites then come from one batched BF16 GEMM with FP32 output (`head_gate`). Against
 cuBLAS, only the FP32 summation order of the first layer differs.
 
-Each architecture has its own kernel: `projection_sm90` (WGMMA) and `projection_sm100` (tcgen05 with the
-accumulator in tensor memory).
+Each architecture has its own kernel: `projection_sm90` (WGMMA), `projection_sm100` (tcgen05 with the
+accumulator in tensor memory) and `projection_sm120` (warp-level mma.sync).
 """
 
 import math
@@ -25,8 +25,10 @@ def _kernel(model_dim, hidden, context_eps, has_delta, capability):
         from .projection_sm90 import FirstProjection
     elif capability == (10, 0):
         from .projection_sm100 import FirstProjection
+    elif capability == (12, 0):
+        from .projection_sm120 import FirstProjection
     else:
-        raise ValueError(f"fast-inference runs on SM90 or SM100 GPUs, not compute capability {capability}")
+        raise ValueError(f"fast-inference runs on SM90, SM100 or SM120 GPUs, not compute capability {capability}")
     return FirstProjection(model_dim, hidden, context_eps, has_delta)
 
 

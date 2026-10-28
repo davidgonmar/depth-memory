@@ -59,7 +59,7 @@ denominator tapes.
 
 ## Launch schedules
 Every kernel launch runs the schedule that the table for its GPU (`tuned/<arch>.json`: `sm100`,
-`sm90`) names for the launch shape, for example
+`sm90`, `sm120`) names for the launch shape, for example
 `window_end E4 F4 N65536 G16 K8 D128` or `forward E4 N32768 G16 K8 D128 first_window edge2`. The
 axes (`schedules.AXES`) only move groups between warps, CTAs and lanes, so every schedule gives
 bitwise the same result; the tuner skips a candidate the kernel would not run as named and stops
@@ -75,7 +75,15 @@ edge2`); its stages hold more shared memory per group, so its best schedules can
 backward entries serve both settings.
 
 A launch without gradients (evaluation at any batch size) whose shape is not in the table runs the
-default schedule. The tables cover every trained shape on B200 and H100.
+default schedule. The tables cover every trained shape on B200 and H100; the SM120 table (RTX PRO
+6000 Blackwell) covers the same shapes and the 400M shape at 8192 and 16384 tokens per GPU.
+
+## Architectures
+The state kernels use only bulk copies, cp.async and mma.sync, which SM90, SM100 and SM120 all have,
+and read their shared-memory budget from the device (about 100 KB per SM on SM120 against 228 KB),
+so they compile unchanged for each. Only the address-network input-gradient GEMM is
+architecture-specific: QuACK's WGMMA (SM90), tcgen05 (SM100) or warp-level MMA (SM120) GEMM, with
+the same epilogue. SM120 is not a superset of SM100: it has neither WGMMA nor tcgen05.
 
 The forward forms key = raw_key * scale itself and writes the key, query, scale and forgetting
 tapes. Both backward kernels stage their edge's read gradient directly and write it into the DY
