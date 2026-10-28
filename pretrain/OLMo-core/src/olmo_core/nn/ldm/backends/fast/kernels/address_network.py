@@ -41,8 +41,13 @@ class Eligibility:
     reasons: tuple[str, ...] = ()
 
 
+SUPPORTED = ((9, 0), (10, 0), (12, 0))
+
+
 def config_candidates(capability):
-    """The two GEMM schedules of an architecture: 128 or 256 columns per tile."""
+    """The two GEMM schedules of an architecture: 128 or 256 columns per tile on SM90 and SM100;
+    on SM120 (warp-level MMA, about 100 KB of shared memory) 128 x 128 tiles with two ping-pong
+    warp groups or one cooperative group."""
     return _config_candidates(tuple(capability))
 
 
@@ -50,13 +55,27 @@ def config_candidates(capability):
 def _config_candidates(capability):
     # QuACK caches launches by the identity of the config object, not by its value. Returning the
     # same objects every time keeps each call off its slow host path.
-    if tuple(capability) not in ((9, 0), (10, 0)):
-        raise ValueError("address dX supports only SM90/SM100")
+    if tuple(capability) not in SUPPORTED:
+        raise ValueError("address dX supports only SM90/SM100/SM120")
     sm = capability[0]
+    if sm == 12:
+        return tuple(GemmConfig(tile_m=128, tile_n=128, cluster_m=1, cluster_n=1,
+                                pingpong=pingpong, is_dynamic_persistent=False,
+                                device_capacity=sm, split_k=1, swap_ab=False)
+                     for pingpong in (True, False))
     return tuple(GemmConfig(tile_m=128, tile_n=columns, cluster_m=1, cluster_n=1,
                             pingpong=sm == 9 and columns == 128, is_dynamic_persistent=False,
                             device_capacity=sm, split_k=1, swap_ab=False)
                  for columns in (128, 256))
+
+
+def backward_config(capability):
+    """The schedule of the training backward: 256 columns on SM90 and SM100, the ping-pong 128 x 128
+    tile on SM120 (the fastest there at the address shapes of 1024 to 4096 wide models)."""
+    candidates = config_candidates(capability)
+    if tuple(capability)[0] == 12:
+        return candidates[0]
+    return next(candidate for candidate in candidates if candidate.tile_n == 256)
 
 
 def _validate_input_grad(x, w, delta, r, s, out):
@@ -113,8 +132,8 @@ def eligibility(x, w, delta, r, s, *, out=None, capability=None):
     if capability is None:
         capability = torch.cuda.get_device_capability(x.device)
     reasons = []
-    if tuple(capability) not in ((9, 0), (10, 0)):
-        reasons.append("only SM90/SM100 are supported")
+    if tuple(capability) not in SUPPORTED:
+        reasons.append("only SM90/SM100/SM120 are supported")
     for name, tensor in (("x", x), ("w", w), ("delta", delta)):
         reasons.extend(_tma_reasons(name, tensor))
     if out is not None:

@@ -169,8 +169,16 @@ def _decode_shapes(tokens, groups, key_dim, value_dim, hidden):
 def tune(groups, key_dim, value_dim, hidden, log) -> Launches:
     torch.manual_seed(0)
     bench = Bench(groups, key_dim, value_dim, hidden, PREFILL_TOKENS)
-    first = next(_prefill_shapes(groups, key_dim))
-    _, reference = bench.time(Launches(first, ()))
+    # The reference is the first tiling that fits the GPU's shared memory (on SM120, 99 KB per CTA,
+    # wide shapes need a cluster).
+    for first in _prefill_shapes(groups, key_dim):
+        try:
+            _, reference = bench.time(Launches(first, ()))
+            break
+        except ValueError:
+            continue
+    else:
+        raise ValueError(f"no prefill tiling fits {shape_key(groups, key_dim, value_dim, hidden)}")
     search = Search(bench, reference, log, tokens=PREFILL_TOKENS)
     for tiling in _prefill_shapes(groups, key_dim):
         search.measure(Launches(tiling, ()), tiling, "prefill")

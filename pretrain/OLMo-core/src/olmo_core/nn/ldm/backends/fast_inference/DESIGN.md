@@ -41,7 +41,7 @@ harness (`eval/olmo_lm.py`) calls `prepare_inference` after loading a checkpoint
 
 A prefill (more tokens than the tuned decode classes) runs three kernels. The projection kernel
 (`kernels/projection.py`) does the residual add, the row RMS, the first layer on tensor cores (WGMMA on
-SM90, tcgen05 on SM100) and the activation. One batched cuBLAS GEMM on `second_layer` without its padding
+SM90, tcgen05 on SM100, mma.sync on SM120) and the activation. One batched cuBLAS GEMM on `second_layer` without its padding
 gives the head and gate projections. The prefill edge kernel (`kernels/edge_state.py`) does the rest.
 
 A decode (few tokens) runs the decode edge kernel alone (`kernels/edge_decode.py`). It also does the
@@ -81,7 +81,7 @@ while the previous kernel finishes.
 
 ## Tuned launches
 
-`tuning.py` reads one JSON table per GPU (`tuned/sm90.json`, `tuned/sm100.json`), keyed by the model
+`tuning.py` reads one JSON table per GPU (`tuned/sm90.json`, `tuned/sm100.json`, `tuned/sm120.json`), keyed by the model
 shape (groups, key, value and hidden width). An entry holds the prefill edge kernel's tiling (tokens per
 cluster, cluster size, key lanes) and the decode classes. A decode class is a token-count bound with the
 decode kernel's tiling (tokens per cluster, cluster size, key lanes, head and gate slices, first-layer
